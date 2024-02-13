@@ -18,3 +18,17 @@ body
 .banner-button {
     background-color: #ff00ff!important;
 }
+
+.my-card
+{
+	padding: 20px;
+	margin-bottom: 20px;
+	background:#FFFFFF;
+	
+}
+.button
+{   
+	
+	background: #453164!important;
+}
+
