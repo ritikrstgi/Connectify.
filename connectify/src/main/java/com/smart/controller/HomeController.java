@@ -3,6 +3,7 @@ package com.smart.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +14,7 @@ import com.smart.entities.User;
 import com.smart.helper.Message;
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 
 @Controller
 public class HomeController 
@@ -43,16 +45,25 @@ public class HomeController
    //handler for registering user
    
    @PostMapping("/do_register")
-   public String registerUser(@ModelAttribute("user") User user, @RequestParam(value="agreement", defaultValue="false")
-   boolean agreement, Model model, HttpSession session)
+   public String registerUser(@Valid @ModelAttribute("user") User user, BindingResult result1, @RequestParam(value="agreement", defaultValue="false")
+   boolean agreement,  Model model, HttpSession session)
    {
 	   try 
 	   {
 		   if(!agreement)
 		   {
 			   System.out.println("you have not agreed the terms and ondition");
-			   throw new Exception("you have not agreed the terms and ondition");
+			   throw new Exception("you have not agreed the terms and condition");
 		   } 
+		   
+		   if(result1.hasErrors())
+		   {
+			   System.out.println("Error" + result1.toString());
+			   model.addAttribute("user", user);
+			   return "signup";
+			   
+		   }
+		   
 		   user.setRole("Role_USER");
 		   user.setEnabled(true);
 		   user.setImageUrl("default.png");
@@ -69,7 +80,7 @@ public class HomeController
 	   {
 		   e.printStackTrace();
 		   model.addAttribute("user",user);
-		   session.setAttribute("message",new Message("You are Already Registered","alert-danger"));
+		   session.setAttribute("message",new Message("something went wrong !! "+e.getMessage(),"alert-danger"));
 		   return "signup";
 	   }
 	   
